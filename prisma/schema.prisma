@@ -1,0 +1,543 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum AdminRole {
+  CHIEF_ADMIN
+  ADMIN
+  EDITOR
+  MINISTRY_EDITOR
+  ANALYST
+}
+
+enum AccountStatus {
+  ACTIVE
+  DISABLED
+}
+
+enum MemberRoleType {
+  PRESIDENT
+  VICE_PRESIDENT
+  DEPUTY
+  MINISTER
+  ADVISOR
+}
+
+enum NewsStatus {
+  DRAFT
+  SCHEDULED
+  PUBLISHED
+  ARCHIVED
+}
+
+enum PublicationStatus {
+  DRAFT
+  SCHEDULED
+  PUBLISHED
+  ARCHIVED
+}
+
+enum EventStatus {
+  PLANNED
+  COMPLETED
+  CANCELLED
+}
+
+enum InitiativeStatus {
+  NEW
+  UNDER_REVIEW
+  ACCEPTED
+  IN_PROGRESS
+  IMPLEMENTED
+  REJECTED
+  ARCHIVED
+}
+
+enum InitiativePriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum LogSeverity {
+  DEBUG
+  INFO
+  WARN
+  ERROR
+  CRITICAL
+}
+
+enum AppLogGroup {
+  HTTP
+  AUTH
+  SECURITY
+  AUDIT
+  DOMAIN
+  JOB
+  SYSTEM
+}
+
+enum SecurityEventType {
+  LOGIN_SUCCESS
+  LOGIN_FAILURE
+  LOGOUT
+  PASSWORD_RESET_REQUEST
+  PASSWORD_RESET_COMPLETE
+  SESSION_REVOKED
+  PERMISSION_DENIED
+  SUSPICIOUS_ACTIVITY
+}
+
+enum AuditAction {
+  CREATE
+  UPDATE
+  DELETE
+  PUBLISH
+  UNPUBLISH
+  STATUS_CHANGE
+  LOGIN
+  LOGOUT
+  OTHER
+}
+
+model AdminUser {
+  id                    String           @id @default(cuid())
+  username              String           @unique
+  email                 String?          @unique
+  passwordHash          String
+  role                  AdminRole        @default(ADMIN)
+  status                AccountStatus    @default(ACTIVE)
+  lastLoginAt           DateTime?
+  createdAt             DateTime         @default(now())
+  updatedAt             DateTime         @updatedAt
+  sessions              AdminSession[]
+  authoredNews          News[]
+  authoredEvents        Event[]
+  authoredReports       Report[]
+  authoredAchievements  Achievement[]
+  authoredGalleryAlbums GalleryAlbum[]
+  assignedInitiatives   Initiative[]     @relation("InitiativeAssignee")
+  initiativeNotes       InitiativeNote[]
+  securityEvents        SecurityEvent[]
+  auditLogs             AuditLog[]
+  appLogs               AppLog[]
+  telemetryEvents       TelemetryEvent[]
+
+  @@index([role, status])
+}
+
+model AdminSession {
+  id             String    @id @default(cuid())
+  adminUserId    String
+  adminUser      AdminUser @relation(fields: [adminUserId], references: [id], onDelete: Cascade)
+  sessionToken   String    @unique
+  ipAddress      String?
+  userAgent      String?
+  browser        String?
+  os             String?
+  deviceType     String?
+  country        String?
+  city           String?
+  startedAt      DateTime  @default(now())
+  lastActivityAt DateTime  @default(now())
+  endedAt        DateTime?
+  revokedAt      DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@index([adminUserId, startedAt(sort: Desc)])
+  @@index([revokedAt])
+}
+
+model SecurityEvent {
+  id              String            @id @default(cuid())
+  eventType       SecurityEventType
+  success         Boolean           @default(true)
+  message         String
+  usernameAttempt String?
+  adminUserId     String?
+  adminUser       AdminUser?        @relation(fields: [adminUserId], references: [id], onDelete: SetNull)
+  ipAddress       String?
+  userAgent       String?
+  requestId       String?
+  metadata        Json?
+  createdAt       DateTime          @default(now())
+
+  @@index([eventType, createdAt(sort: Desc)])
+  @@index([success, createdAt(sort: Desc)])
+}
+
+model AuditLog {
+  id            String      @id @default(cuid())
+  action        AuditAction
+  module        String
+  entityType    String
+  entityId      String?
+  summary       String
+  actorUserId   String?
+  actorUser     AdminUser?  @relation(fields: [actorUserId], references: [id], onDelete: SetNull)
+  beforeData    Json?
+  afterData     Json?
+  ipAddress     String?
+  userAgent     String?
+  requestId     String?
+  correlationId String?
+  createdAt     DateTime    @default(now())
+
+  @@index([module, createdAt(sort: Desc)])
+  @@index([entityType, entityId])
+  @@index([actorUserId, createdAt(sort: Desc)])
+}
+
+model AppLog {
+  id            String      @id @default(cuid())
+  group         AppLogGroup
+  severity      LogSeverity @default(INFO)
+  module        String
+  message       String
+  requestId     String?
+  correlationId String?
+  method        String?
+  path          String?
+  statusCode    Int?
+  latencyMs     Int?
+  ipAddress     String?
+  userAgent     String?
+  adminUserId   String?
+  adminUser     AdminUser?  @relation(fields: [adminUserId], references: [id], onDelete: SetNull)
+  metadata      Json?
+  createdAt     DateTime    @default(now())
+
+  @@index([group, createdAt(sort: Desc)])
+  @@index([severity, createdAt(sort: Desc)])
+  @@index([requestId])
+}
+
+model TelemetryEvent {
+  id          String     @id @default(cuid())
+  category    String
+  eventType   String
+  path        String?
+  referrer    String?
+  sessionId   String?
+  visitorHash String?
+  durationMs  Int?
+  value       Float?
+  adminUserId String?
+  adminUser   AdminUser? @relation(fields: [adminUserId], references: [id], onDelete: SetNull)
+  metadata    Json?
+  createdAt   DateTime   @default(now())
+
+  @@index([category, createdAt(sort: Desc)])
+  @@index([eventType, createdAt(sort: Desc)])
+  @@index([path])
+}
+
+model Member {
+  id            String         @id @default(cuid())
+  fullName      String
+  slug          String?        @unique
+  roleType      MemberRoleType
+  positionTitle String
+  shortBio      String
+  activeTerm    String?
+  duties        String?
+  photoPath     String?
+  ministries    Ministry[]     @relation("MemberMinistries")
+  leadsMinistry Ministry?      @relation("MinistryMinister")
+  displayOrder  Int            @default(0)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  @@index([roleType, displayOrder])
+}
+
+model Ministry {
+  id                  String        @id @default(cuid())
+  name                String
+  slug                String        @unique
+  shortDescription    String
+  fullDescription     String
+  workDirections      String
+  initiativeHighlight String?
+  displayOrder        Int           @default(0)
+  ministerMemberId    String?       @unique
+  ministerMember      Member?       @relation("MinistryMinister", fields: [ministerMemberId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  members             Member[]      @relation("MemberMinistries")
+  news                News[]
+  events              Event[]
+  initiatives         Initiative[]  @relation("InitiativeMinistry")
+  reports             Report[]
+  achievements        Achievement[]
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+
+  @@index([displayOrder])
+}
+
+model NewsCategory {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  news      News[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([name])
+}
+
+model NewsTag {
+  id        String      @id @default(cuid())
+  name      String
+  slug      String      @unique
+  newsLinks NewsOnTag[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  @@index([name])
+}
+
+model NewsOnTag {
+  newsId String
+  tagId  String
+  news   News    @relation(fields: [newsId], references: [id], onDelete: Cascade)
+  tag    NewsTag @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([newsId, tagId])
+  @@index([tagId])
+}
+
+model News {
+  id             String        @id @default(cuid())
+  title          String
+  slug           String        @unique
+  summary        String
+  content        String
+  coverImagePath String?
+  status         NewsStatus    @default(DRAFT)
+  scheduledAt    DateTime?
+  publishedAt    DateTime?
+  categoryId     String?
+  category       NewsCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  ministryId     String?
+  ministry       Ministry?     @relation(fields: [ministryId], references: [id], onDelete: SetNull)
+  eventId        String?
+  event          Event?        @relation(fields: [eventId], references: [id], onDelete: SetNull)
+  authorId       String?
+  author         AdminUser?    @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  tags           NewsOnTag[]
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@index([status, publishedAt(sort: Desc)])
+  @@index([categoryId])
+  @@index([ministryId])
+}
+
+model Document {
+  id               String            @id @default(cuid())
+  title            String
+  description      String
+  category         String
+  version          String            @default("1.0")
+  filePath         String
+  originalFileName String
+  mimeType         String
+  fileSize         Int
+  status           PublicationStatus @default(PUBLISHED)
+  downloadsCount   Int               @default(0)
+  publishedAt      DateTime
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  @@index([status, publishedAt(sort: Desc)])
+  @@index([category])
+}
+
+model Event {
+  id            String         @id @default(cuid())
+  title         String
+  slug          String         @unique
+  description   String
+  category      String
+  organizer     String?
+  location      String?
+  startAt       DateTime
+  endAt         DateTime?
+  status        EventStatus    @default(PLANNED)
+  ministryId    String?
+  ministry      Ministry?      @relation(fields: [ministryId], references: [id], onDelete: SetNull)
+  news          News[]
+  createdById   String?
+  createdBy     AdminUser?     @relation(fields: [createdById], references: [id], onDelete: SetNull)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  galleryAlbums GalleryAlbum[]
+  achievements  Achievement[]
+
+  @@index([startAt(sort: Desc)])
+  @@index([status])
+  @@index([ministryId])
+}
+
+model Initiative {
+  id                 String             @id @default(cuid())
+  title              String
+  description        String
+  submitterName      String?
+  submitterContact   String?
+  submitterClass     String?
+  isAnonymous        Boolean            @default(false)
+  attachmentPath     String?
+  attachmentMimeType String?
+  attachmentSize     Int?
+  status             InitiativeStatus   @default(NEW)
+  priority           InitiativePriority @default(MEDIUM)
+  assignedMinistryId String?
+  assignedMinistry   Ministry?          @relation("InitiativeMinistry", fields: [assignedMinistryId], references: [id], onDelete: SetNull)
+  assignedAdminId    String?
+  assignedAdmin      AdminUser?         @relation("InitiativeAssignee", fields: [assignedAdminId], references: [id], onDelete: SetNull)
+  publicShowcase     Boolean            @default(false)
+  implementedAt      DateTime?
+  notes              InitiativeNote[]
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  @@index([status, createdAt(sort: Desc)])
+  @@index([priority, createdAt(sort: Desc)])
+  @@index([assignedMinistryId])
+}
+
+model InitiativeNote {
+  id             String            @id @default(cuid())
+  initiativeId   String
+  initiative     Initiative        @relation(fields: [initiativeId], references: [id], onDelete: Cascade)
+  authorId       String?
+  author         AdminUser?        @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  note           String
+  isStatusChange Boolean           @default(false)
+  fromStatus     InitiativeStatus?
+  toStatus       InitiativeStatus?
+  createdAt      DateTime          @default(now())
+
+  @@index([initiativeId, createdAt(sort: Desc)])
+}
+
+model Report {
+  id               String            @id @default(cuid())
+  title            String
+  slug             String            @unique
+  periodLabel      String
+  summary          String
+  content          String
+  status           PublicationStatus @default(DRAFT)
+  scheduledAt      DateTime?
+  publishedAt      DateTime?
+  ministryId       String?
+  ministry         Ministry?         @relation(fields: [ministryId], references: [id], onDelete: SetNull)
+  filePath         String?
+  originalFileName String?
+  mimeType         String?
+  fileSize         Int?
+  createdById      String?
+  createdBy        AdminUser?        @relation(fields: [createdById], references: [id], onDelete: SetNull)
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  @@index([status, publishedAt(sort: Desc)])
+  @@index([ministryId, periodLabel])
+}
+
+model GalleryAlbum {
+  id             String            @id @default(cuid())
+  title          String
+  slug           String            @unique
+  description    String
+  coverImagePath String?
+  status         PublicationStatus @default(DRAFT)
+  publishedAt    DateTime?
+  eventId        String?
+  event          Event?            @relation(fields: [eventId], references: [id], onDelete: SetNull)
+  createdById    String?
+  createdBy      AdminUser?        @relation(fields: [createdById], references: [id], onDelete: SetNull)
+  items          GalleryItem[]
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+
+  @@index([status, publishedAt(sort: Desc)])
+}
+
+model GalleryItem {
+  id        String       @id @default(cuid())
+  albumId   String
+  album     GalleryAlbum @relation(fields: [albumId], references: [id], onDelete: Cascade)
+  mediaPath String
+  mediaType String
+  caption   String?
+  sortOrder Int          @default(0)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  @@index([albumId, sortOrder])
+}
+
+model Achievement {
+  id          String            @id @default(cuid())
+  title       String
+  slug        String            @unique
+  summary     String
+  content     String
+  impact      String?
+  status      PublicationStatus @default(DRAFT)
+  publishedAt DateTime?
+  ministryId  String?
+  ministry    Ministry?         @relation(fields: [ministryId], references: [id], onDelete: SetNull)
+  eventId     String?
+  event       Event?            @relation(fields: [eventId], references: [id], onDelete: SetNull)
+  createdById String?
+  createdBy   AdminUser?        @relation(fields: [createdById], references: [id], onDelete: SetNull)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  @@index([status, publishedAt(sort: Desc)])
+  @@index([ministryId])
+}
+
+model StaticPage {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  title     String
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model HomeBlock {
+  id           String   @id @default(cuid())
+  key          String   @unique
+  title        String
+  description  String
+  ctaLabel     String?
+  ctaHref      String?
+  displayOrder Int      @default(0)
+  isEnabled    Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([displayOrder])
+}
+
+model SiteSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+

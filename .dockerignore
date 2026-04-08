@@ -1,0 +1,11 @@
+﻿node_modules
+.next
+coverage
+playwright-report
+test-results
+.git
+.vscode
+README.md
+codex_master_prompt_school_parliament.docx
+codex_master_prompt_school_parliament.md
+codex_master_prompt_school_parliament_steps.md

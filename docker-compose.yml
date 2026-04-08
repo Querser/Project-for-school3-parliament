@@ -1,0 +1,58 @@
+﻿services:
+  db:
+    image: postgres:16-alpine
+    container_name: school_parliament_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: school_parliament
+      POSTGRES_USER: school_parliament
+      POSTGRES_PASSWORD: school_parliament
+    ports:
+      - "5433:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U school_parliament -d school_parliament"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: school_parliament_web
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      NEXTAUTH_URL: http://localhost
+      NEXTAUTH_SECRET: change-me-super-secret
+      DATABASE_URL: postgresql://school_parliament:school_parliament@db:5432/school_parliament?schema=public
+      STORAGE_ROOT: /app/storage
+      ADMIN_SEED_USERNAME: admin
+      ADMIN_SEED_PASSWORD: admin12345
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - storage_data:/app/storage
+
+  caddy:
+    image: caddy:2.9-alpine
+    container_name: school_parliament_caddy
+    restart: unless-stopped
+    depends_on:
+      - web
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./infra/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  db_data:
+  storage_data:
+  caddy_data:
+  caddy_config:
