@@ -8,6 +8,7 @@ import { Select } from "@/components/shared/select";
 import { Textarea } from "@/components/shared/textarea";
 import { getMinistriesPublicList } from "@/features/ministries/service";
 import { requireSectionAccess } from "@/lib/auth/session";
+import { IMAGE_UPLOAD_ACCEPT } from "@/lib/constants";
 
 import { createMemberAction } from "../actions";
 
@@ -90,7 +91,7 @@ export default async function AdminMemberNewPage({
 
         <label className="block space-y-1 text-sm">
           <span className="font-medium text-slate-700">Фото (опционально)</span>
-          <Input type="file" name="photo" accept="image/png,image/jpeg,image/webp" />
+          <Input type="file" name="photo" accept={IMAGE_UPLOAD_ACCEPT} />
         </label>
 
         <Button type="submit">Сохранить участника</Button>

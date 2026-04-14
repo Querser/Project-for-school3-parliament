@@ -8,6 +8,7 @@ import { Input } from "@/components/shared/input";
 import { Select } from "@/components/shared/select";
 import { Textarea } from "@/components/shared/textarea";
 import { getGalleryAlbumById } from "@/features/gallery/service";
+import { IMAGE_UPLOAD_ACCEPT } from "@/lib/constants";
 import { prisma } from "@/lib/db/prisma";
 import { toPublicUploadUrl } from "@/lib/storage";
 import { toDateInputValue } from "@/lib/utils/date";
@@ -98,7 +99,7 @@ export default async function AdminGalleryEditPage({
 
         <label className="block space-y-1 text-sm">
           <span className="font-medium text-slate-700">Новая обложка</span>
-          <Input name="coverImage" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" />
+          <Input name="coverImage" type="file" accept={IMAGE_UPLOAD_ACCEPT} />
         </label>
 
         <Button type="submit">Сохранить изменения</Button>
@@ -109,7 +110,7 @@ export default async function AdminGalleryEditPage({
         <form action={addGalleryItemAction.bind(null, album.id)} className="space-y-3">
           <label className="block space-y-1 text-sm">
             <span className="font-medium text-slate-700">Файл</span>
-            <Input name="media" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" required />
+            <Input name="media" type="file" accept={IMAGE_UPLOAD_ACCEPT} required />
           </label>
           <div className="grid gap-3 md:grid-cols-2">
             <label className="block space-y-1 text-sm">

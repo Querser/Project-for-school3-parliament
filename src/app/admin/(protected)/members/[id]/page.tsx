@@ -9,6 +9,7 @@ import { Textarea } from "@/components/shared/textarea";
 import { getMemberById } from "@/features/members/service";
 import { getMinistriesPublicList } from "@/features/ministries/service";
 import { requireSectionAccess } from "@/lib/auth/session";
+import { IMAGE_UPLOAD_ACCEPT } from "@/lib/constants";
 
 import { updateMemberAction } from "../actions";
 
@@ -117,7 +118,7 @@ export default async function AdminMemberEditPage({
 
         <label className="block space-y-1 text-sm">
           <span className="font-medium text-slate-700">Новое фото (опционально)</span>
-          <Input type="file" name="photo" accept="image/png,image/jpeg,image/webp" />
+          <Input type="file" name="photo" accept={IMAGE_UPLOAD_ACCEPT} />
         </label>
 
         {member.photoPath ? (

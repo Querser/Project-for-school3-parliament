@@ -7,6 +7,7 @@ import { Input } from "@/components/shared/input";
 import { Select } from "@/components/shared/select";
 import { Textarea } from "@/components/shared/textarea";
 import { getNewsById, getNewsMetaOptions } from "@/features/news/service";
+import { IMAGE_UPLOAD_ACCEPT } from "@/lib/constants";
 import { toDateTimeInputValue } from "@/lib/utils/date";
 
 import { updateNewsAction } from "../actions";
@@ -125,7 +126,7 @@ export default async function AdminNewsEditPage({
 
         <label className="block space-y-1 text-sm">
           <span className="font-medium text-slate-700">Новая обложка (опционально)</span>
-          <Input type="file" name="coverImage" accept="image/png,image/jpeg,image/webp,image/svg+xml" />
+          <Input type="file" name="coverImage" accept={IMAGE_UPLOAD_ACCEPT} />
         </label>
 
         {news.coverImagePath ? (

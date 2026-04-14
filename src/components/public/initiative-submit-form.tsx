@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/shared/button";
 import { Input } from "@/components/shared/input";
 import { Textarea } from "@/components/shared/textarea";
+import { PUBLIC_ATTACHMENT_ACCEPT } from "@/lib/constants";
 
 function FieldError({ message }: { message?: string }) {
   if (!message) {
@@ -98,7 +99,7 @@ export function InitiativeSubmitForm() {
 
       <label className="block space-y-1 text-sm">
         <span className="font-medium text-slate-700">Вложение</span>
-        <Input type="file" name="attachment" accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg,.webp,.svg" />
+        <Input type="file" name="attachment" accept={PUBLIC_ATTACHMENT_ACCEPT} />
       </label>
 
       <div className="space-y-1 text-sm">

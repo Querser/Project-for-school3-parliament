@@ -6,6 +6,7 @@ import { Button } from "@/components/shared/button";
 import { Input } from "@/components/shared/input";
 import { Select } from "@/components/shared/select";
 import { Textarea } from "@/components/shared/textarea";
+import { IMAGE_UPLOAD_ACCEPT } from "@/lib/constants";
 import { prisma } from "@/lib/db/prisma";
 
 import { createGalleryAlbumAction } from "../actions";
@@ -71,7 +72,7 @@ export default async function AdminGalleryNewPage({
 
         <label className="block space-y-1 text-sm">
           <span className="font-medium text-slate-700">Обложка (опционально)</span>
-          <Input name="coverImage" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" />
+          <Input name="coverImage" type="file" accept={IMAGE_UPLOAD_ACCEPT} />
         </label>
 
         <Button type="submit">Сохранить альбом</Button>

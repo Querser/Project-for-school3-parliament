@@ -7,6 +7,21 @@ import { nanoid } from "nanoid";
 import type { SaveFileOptions, SavedFile, StorageProvider } from "@/lib/storage/types";
 
 const STORAGE_ROOT = path.resolve(process.env.STORAGE_ROOT ?? "storage");
+const OCTET_STREAM_MIME = "application/octet-stream";
+
+const EXTENSION_TO_MIME: Record<string, string> = {
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".png": "image/png",
+  ".webp": "image/webp",
+  ".svg": "image/svg+xml",
+  ".heic": "image/heic",
+  ".heif": "image/heif",
+  ".pdf": "application/pdf",
+  ".doc": "application/msword",
+  ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  ".txt": "text/plain",
+};
 
 function assertSafeRelativePath(relativePath: string): string {
   const normalized = path.posix.normalize(relativePath.replaceAll("\\", "/"));
@@ -29,6 +44,20 @@ function getExtension(file: File): string {
   return mimeExtension ? `.${mimeExtension}` : "";
 }
 
+function resolveMimeType(file: File): string {
+  const explicitMimeType = file.type.trim().toLowerCase();
+  if (explicitMimeType && explicitMimeType !== OCTET_STREAM_MIME) {
+    return explicitMimeType;
+  }
+
+  const extension = path.extname(file.name || "").toLowerCase();
+  if (extension && EXTENSION_TO_MIME[extension]) {
+    return EXTENSION_TO_MIME[extension];
+  }
+
+  return explicitMimeType;
+}
+
 function buildStorageName(file: File): string {
   const extension = getExtension(file);
   return `${Date.now()}-${nanoid(10)}${extension}`;
@@ -44,7 +73,8 @@ export class LocalStorageProvider implements StorageProvider {
       throw new Error("Размер файла превышает допустимый лимит");
     }
 
-    if (!options.allowedMimeTypes.includes(file.type)) {
+    const normalizedMimeType = resolveMimeType(file);
+    if (!options.allowedMimeTypes.includes(normalizedMimeType)) {
       throw new Error("Недопустимый тип файла");
     }
 
@@ -60,7 +90,7 @@ export class LocalStorageProvider implements StorageProvider {
 
     return {
       filePath: relativePath,
-      mimeType: file.type,
+      mimeType: normalizedMimeType,
       fileSize: buffer.byteLength,
       originalFileName: file.name,
     };
