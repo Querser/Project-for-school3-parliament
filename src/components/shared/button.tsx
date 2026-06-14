@@ -1,4 +1,4 @@
-﻿import * as React from "react";
+import * as React from "react";
 
 import { cn } from "@/lib/utils/cn";
 
@@ -17,28 +17,26 @@ const sizeClasses: Record<ButtonSize, string> = {
   sm: "h-8 px-3 text-sm",
 };
 
-export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ButtonProps extends React.ComponentProps<"button"> {
   variant?: ButtonVariant;
   size?: ButtonSize;
 }
 
-export function Button({
-  className,
-  variant = "default",
-  size = "default",
-  type = "button",
-  ...props
-}: ButtonProps) {
-  return (
-    <button
-      type={type}
-      className={cn(
-        "inline-flex items-center justify-center rounded-md font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50",
-        variantClasses[variant],
-        sizeClasses[size],
-        className,
-      )}
-      {...props}
-    />
-  );
+export function Button(props: ButtonProps) {
+  const variant = props.variant ?? "default";
+  const size = props.size ?? "default";
+  const buttonProps = Object.assign({}, props, {
+    type: props.type ?? "button",
+    className: cn(
+      "inline-flex items-center justify-center rounded-md font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50",
+      variantClasses[variant],
+      sizeClasses[size],
+      props.className,
+    ),
+  });
+
+  delete buttonProps.variant;
+  delete buttonProps.size;
+
+  return React.createElement("button", buttonProps);
 }

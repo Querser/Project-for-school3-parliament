@@ -1,17 +1,11 @@
 ﻿"use client";
 
-import { useState } from "react";
+import { type FormEvent, useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
 
 import { Button } from "@/components/shared/button";
 import { Input } from "@/components/shared/input";
-
-interface LoginFormValues {
-  username: string;
-  password: string;
-}
 
 function resolveLoginErrorMessage(errorCode?: string | null) {
   if (!errorCode) {
@@ -32,25 +26,21 @@ function resolveLoginErrorMessage(errorCode?: string | null) {
 export default function AdminLoginPage() {
   const router = useRouter();
   const [error, setError] = useState<string>("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { isSubmitting },
-  } = useForm<LoginFormValues>({
-    defaultValues: {
-      username: "",
-      password: "",
-    },
-  });
-
-  const onSubmit = handleSubmit(async (values) => {
+  async function onSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
     setError("");
+    setIsSubmitting(true);
+
+    const formData = new FormData(event.currentTarget);
+    const username = String(formData.get("username") ?? "");
+    const password = String(formData.get("password") ?? "");
 
     try {
       const result = await signIn("credentials", {
-        username: values.username,
-        password: values.password,
+        username,
+        password,
         redirect: false,
       });
 
@@ -68,8 +58,10 @@ export default function AdminLoginPage() {
       router.refresh();
     } catch {
       setError("Сервис авторизации временно недоступен. Повторите попытку позже.");
+    } finally {
+      setIsSubmitting(false);
     }
-  });
+  }
 
   return (
     <main className="mx-auto flex min-h-[calc(100vh-2rem)] w-full max-w-md items-center px-4 py-10">
@@ -82,14 +74,15 @@ export default function AdminLoginPage() {
         <form className="mt-6 space-y-4" onSubmit={onSubmit}>
           <label className="block space-y-1 text-sm">
             <span className="font-medium text-slate-700">Логин</span>
-            <Input {...register("username", { required: true })} autoComplete="username" />
+            <Input name="username" required autoComplete="username" />
           </label>
 
           <label className="block space-y-1 text-sm">
             <span className="font-medium text-slate-700">Пароль</span>
             <Input
               type="password"
-              {...register("password", { required: true })}
+              name="password"
+              required
               autoComplete="current-password"
             />
           </label>
