@@ -149,7 +149,9 @@ export async function getPublicGalleryPhotos(): Promise<PublicGalleryPhoto[]> {
     }
   }
 
-  return Array.from(uniqueByPath.values()).sort((a, b) => b.publishedAt.getTime() - a.publishedAt.getTime());
+  return Array.from(uniqueByPath.values()).sort(
+    (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime(),
+  );
 }
 
 export async function getGalleryAlbumBySlug(slug: string) {

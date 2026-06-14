@@ -3,10 +3,11 @@
 import { SectionTitle } from "@/components/public/section-title";
 import { Card } from "@/components/shared/card";
 import { EmptyState } from "@/components/shared/empty-state";
-import { Input } from "@/components/shared/input";
-import { Select } from "@/components/shared/select";
 import { formatDate } from "@/lib/utils/date";
 import { getPublicDocuments } from "@/features/documents/service";
+
+const inputClassName =
+  "h-10 w-full rounded-md border border-slate-300 bg-white px-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200";
 
 export default async function DocumentsPage({
   searchParams,
@@ -44,15 +45,15 @@ export default async function DocumentsPage({
 
       <Card>
         <form method="get" className="grid gap-3 md:grid-cols-[1fr_260px_auto]">
-          <Input name="q" placeholder="Поиск по документам" defaultValue={params.q ?? ""} />
-          <Select name="category" defaultValue={category}>
+          <input className={inputClassName} name="q" placeholder="Поиск по документам" defaultValue={params.q ?? ""} />
+          <select className={inputClassName} name="category" defaultValue={category}>
             <option value="">Все категории</option>
             {categories.map((item) => (
               <option key={item} value={item}>
                 {item}
               </option>
             ))}
-          </Select>
+          </select>
           <button type="submit" className="rounded-md bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700">
             Применить
           </button>

@@ -3,10 +3,11 @@
 import { SectionTitle } from "@/components/public/section-title";
 import { Card } from "@/components/shared/card";
 import { EmptyState } from "@/components/shared/empty-state";
-import { Input } from "@/components/shared/input";
-import { Select } from "@/components/shared/select";
 import { globalSearchSchema } from "@/lib/validators/search";
 import { runGlobalSearch } from "@/features/search/service";
+
+const inputClassName =
+  "h-10 w-full rounded-md border border-slate-300 bg-white px-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200";
 
 const scopeOptions = [
   { value: "all", label: "Все разделы" },
@@ -41,14 +42,14 @@ export default async function SearchPage({
 
       <Card>
         <form className="grid gap-3 md:grid-cols-[1fr_220px_auto]" method="get">
-          <Input name="q" placeholder="Введите запрос" defaultValue={params.q ?? ""} />
-          <Select name="scope" defaultValue={parsed.success ? parsed.data.scope : "all"}>
+          <input className={inputClassName} name="q" placeholder="Введите запрос" defaultValue={params.q ?? ""} />
+          <select className={inputClassName} name="scope" defaultValue={parsed.success ? parsed.data.scope : "all"}>
             {scopeOptions.map((option) => (
               <option key={option.value} value={option.value}>
                 {option.label}
               </option>
             ))}
-          </Select>
+          </select>
           <button type="submit" className="rounded-md bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700">
             Найти
           </button>

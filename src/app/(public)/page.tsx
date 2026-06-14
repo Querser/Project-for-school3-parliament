@@ -58,7 +58,6 @@ export default async function HomePage() {
 
   const dynamicQuickLinks = homeBlocks
     .filter((block) => block.isEnabled)
-    .sort((a, b) => a.displayOrder - b.displayOrder || a.createdAt.getTime() - b.createdAt.getTime())
     .map((block) => ({
       key: block.key,
       title: block.title,

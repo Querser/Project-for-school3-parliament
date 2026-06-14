@@ -5,7 +5,9 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/shared/button";
-import { Input } from "@/components/shared/input";
+
+const inputClassName =
+  "h-10 w-full rounded-md border border-slate-300 bg-white px-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200";
 
 function resolveLoginErrorMessage(errorCode?: string | null) {
   if (!errorCode) {
@@ -74,12 +76,13 @@ export default function AdminLoginPage() {
         <form className="mt-6 space-y-4" onSubmit={onSubmit}>
           <label className="block space-y-1 text-sm">
             <span className="font-medium text-slate-700">Логин</span>
-            <Input name="username" required autoComplete="username" />
+            <input className={inputClassName} name="username" required autoComplete="username" />
           </label>
 
           <label className="block space-y-1 text-sm">
             <span className="font-medium text-slate-700">Пароль</span>
-            <Input
+            <input
+              className={inputClassName}
               type="password"
               name="password"
               required
