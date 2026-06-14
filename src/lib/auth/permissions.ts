@@ -3,10 +3,8 @@
 export type AdminSection =
   | "dashboard"
   | "news"
-  | "events"
   | "initiatives"
   | "documents"
-  | "reports"
   | "gallery"
   | "achievements"
   | "ministries"
@@ -25,10 +23,8 @@ export type AdminNavItem = {
 export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
   { href: "/admin", label: "Дашборд", section: "dashboard" },
   { href: "/admin/news", label: "Новости", section: "news" },
-  { href: "/admin/events", label: "События", section: "events" },
   { href: "/admin/initiatives", label: "Инициативы", section: "initiatives" },
   { href: "/admin/documents", label: "Документы", section: "documents" },
-  { href: "/admin/reports", label: "Отчеты", section: "reports" },
   { href: "/admin/gallery", label: "Галерея", section: "gallery" },
   { href: "/admin/achievements", label: "Достижения", section: "achievements" },
   { href: "/admin/ministries", label: "Министерства", section: "ministries" },
@@ -43,10 +39,8 @@ const roleAccessMap: Record<AdminRole, Record<AdminSection, boolean>> = {
   CHIEF_ADMIN: {
     dashboard: true,
     news: true,
-    events: true,
     initiatives: true,
     documents: true,
-    reports: true,
     gallery: true,
     achievements: true,
     ministries: true,
@@ -59,10 +53,8 @@ const roleAccessMap: Record<AdminRole, Record<AdminSection, boolean>> = {
   ADMIN: {
     dashboard: true,
     news: true,
-    events: true,
     initiatives: true,
     documents: true,
-    reports: true,
     gallery: true,
     achievements: true,
     ministries: true,
@@ -75,10 +67,8 @@ const roleAccessMap: Record<AdminRole, Record<AdminSection, boolean>> = {
   MINISTRY_EDITOR: {
     dashboard: true,
     news: true,
-    events: true,
     initiatives: true,
     documents: true,
-    reports: true,
     gallery: true,
     achievements: true,
     ministries: true,
@@ -91,10 +81,8 @@ const roleAccessMap: Record<AdminRole, Record<AdminSection, boolean>> = {
   EDITOR: {
     dashboard: true,
     news: true,
-    events: true,
     initiatives: true,
     documents: true,
-    reports: true,
     gallery: true,
     achievements: true,
     ministries: true,
@@ -107,10 +95,8 @@ const roleAccessMap: Record<AdminRole, Record<AdminSection, boolean>> = {
   ANALYST: {
     dashboard: true,
     news: false,
-    events: false,
     initiatives: false,
     documents: false,
-    reports: false,
     gallery: false,
     achievements: false,
     ministries: false,

@@ -45,7 +45,7 @@ const defaultHomeBlocks: HomeBlockDraft[] = [
   {
     key: "home_documents",
     title: "Официальные документы",
-    description: "Конституция, регламенты, протоколы и отчеты в открытом доступе.",
+    description: "Конституция, регламенты, протоколы и решения в открытом доступе.",
     ctaLabel: "Открыть библиотеку",
     ctaHref: "/documents",
     displayOrder: 2,

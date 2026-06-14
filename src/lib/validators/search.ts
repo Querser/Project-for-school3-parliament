@@ -2,9 +2,7 @@
 
 export const globalSearchSchema = z.object({
   q: z.string().trim().min(2, "Введите минимум 2 символа").max(120),
-  scope: z
-    .enum(["all", "news", "documents", "ministries", "events", "reports", "achievements"])
-    .default("all"),
+  scope: z.enum(["all", "news", "documents", "ministries", "achievements"]).default("all"),
 });
 
 export type GlobalSearchInput = z.infer<typeof globalSearchSchema>;

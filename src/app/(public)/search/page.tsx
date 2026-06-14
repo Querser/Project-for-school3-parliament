@@ -13,8 +13,6 @@ const scopeOptions = [
   { value: "news", label: "Новости" },
   { value: "documents", label: "Документы" },
   { value: "ministries", label: "Министерства" },
-  { value: "events", label: "События" },
-  { value: "reports", label: "Отчеты" },
   { value: "achievements", label: "Достижения" },
 ] as const;
 
@@ -38,7 +36,7 @@ export default async function SearchPage({
     <div className="space-y-6">
       <SectionTitle
         title="Глобальный поиск"
-        description="Поиск по новостям, документам, министерствам, событиям, отчетам и достижениям."
+        description="Поиск по новостям, документам, министерствам и достижениям."
       />
 
       <Card>
@@ -104,32 +102,6 @@ export default async function SearchPage({
             </Card>
           ) : null}
 
-          {results.events.length > 0 ? (
-            <Card className="space-y-2">
-              <h2 className="text-lg font-semibold text-slate-900">События</h2>
-              {results.events.map((item) => (
-                <p key={item.id} className="text-sm text-slate-700">
-                  <Link href={`/events/${item.slug}`} className="font-semibold text-slate-800 hover:underline">
-                    {item.title}
-                  </Link>
-                </p>
-              ))}
-            </Card>
-          ) : null}
-
-          {results.reports.length > 0 ? (
-            <Card className="space-y-2">
-              <h2 className="text-lg font-semibold text-slate-900">Отчеты</h2>
-              {results.reports.map((item) => (
-                <p key={item.id} className="text-sm text-slate-700">
-                  <Link href={`/reports/${item.slug}`} className="font-semibold text-slate-800 hover:underline">
-                    {item.title}
-                  </Link>
-                </p>
-              ))}
-            </Card>
-          ) : null}
-
           {results.achievements.length > 0 ? (
             <Card className="space-y-2">
               <h2 className="text-lg font-semibold text-slate-900">Достижения</h2>
@@ -144,8 +116,6 @@ export default async function SearchPage({
           {results.news.length === 0 &&
           results.documents.length === 0 &&
           results.ministries.length === 0 &&
-          results.events.length === 0 &&
-          results.reports.length === 0 &&
           results.achievements.length === 0 ? (
             <EmptyState title="Ничего не найдено" description="Попробуйте изменить формулировку запроса или выбрать другой раздел." />
           ) : null}

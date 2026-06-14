@@ -9,7 +9,6 @@ import { Select } from "@/components/shared/select";
 import { Textarea } from "@/components/shared/textarea";
 import { getGalleryAlbumById } from "@/features/gallery/service";
 import { IMAGE_UPLOAD_ACCEPT } from "@/lib/constants";
-import { prisma } from "@/lib/db/prisma";
 import { toPublicUploadUrl } from "@/lib/storage";
 import { toDateInputValue } from "@/lib/utils/date";
 
@@ -30,10 +29,7 @@ export default async function AdminGalleryEditPage({
   const { id } = await params;
   const { error, success } = await searchParams;
 
-  const [album, events] = await Promise.all([
-    getGalleryAlbumById(id),
-    prisma.event.findMany({ orderBy: [{ startAt: "desc" }] }).catch(() => []),
-  ]);
+  const album = await getGalleryAlbumById(id);
 
   if (!album) {
     return (
@@ -84,18 +80,6 @@ export default async function AdminGalleryEditPage({
             <Input name="publishedAt" type="date" defaultValue={toDateInputValue(album.publishedAt)} />
           </label>
         </div>
-
-        <label className="block space-y-1 text-sm">
-          <span className="font-medium text-slate-700">Связанное событие</span>
-          <Select name="eventId" defaultValue={album.eventId ?? ""}>
-            <option value="">Не выбрано</option>
-            {events.map((event) => (
-              <option key={event.id} value={event.id}>
-                {event.title}
-              </option>
-            ))}
-          </Select>
-        </label>
 
         <label className="block space-y-1 text-sm">
           <span className="font-medium text-slate-700">Новая обложка</span>

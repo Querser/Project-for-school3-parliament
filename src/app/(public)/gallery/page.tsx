@@ -12,13 +12,12 @@ export default async function GalleryPage() {
   const photos = await getPublicGalleryPhotos().catch(() => []);
   const sourceTypeLabel: Record<string, string> = {
     news: "Новость",
-    event: "Событие",
     gallery: "Галерея",
   };
 
   return (
     <div className="space-y-6">
-      <SectionTitle title="Галерея" description="Фотографии из новостей, мероприятий и альбомов ученического парламента." />
+      <SectionTitle title="Галерея" description="Фотографии из новостей и альбомов ученического парламента." />
 
       {photos.length === 0 ? (
         <EmptyState title="Галерея пока пуста" description="После публикации материалов они появятся в этом разделе." />

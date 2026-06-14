@@ -7,7 +7,6 @@ export const galleryAlbumSchema = z.object({
   description: z.string().trim().min(1, "Добавьте описание альбома"),
   status: z.enum(["DRAFT", "SCHEDULED", "PUBLISHED", "ARCHIVED"]),
   publishedAt: dateInputSchema.optional().or(z.literal("")),
-  eventId: z.string().trim().optional().or(z.literal("")),
 });
 
 export const galleryItemSchema = z.object({

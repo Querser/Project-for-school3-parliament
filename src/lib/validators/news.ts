@@ -10,7 +10,6 @@ export const newsSchema = z.object({
   scheduledAt: dateTimeInputSchema.optional().or(z.literal("")),
   categoryId: z.string().trim().optional().or(z.literal("")),
   ministryId: z.string().trim().optional().or(z.literal("")),
-  eventId: z.string().trim().optional().or(z.literal("")),
   tags: z.string().trim().optional().or(z.literal("")),
 });
 

@@ -17,10 +17,9 @@ export default async function AdminNewsNewPage({
   searchParams: Promise<{ error?: string; success?: string }>;
 }) {
   const { error, success } = await searchParams;
-  const { categories, ministries, events, tags } = await getNewsMetaOptions().catch(() => ({
+  const { categories, ministries, tags } = await getNewsMetaOptions().catch(() => ({
     categories: [],
     ministries: [],
-    events: [],
     tags: [],
   }));
 
@@ -68,7 +67,7 @@ export default async function AdminNewsNewPage({
           <Input name="scheduledAt" type="datetime-local" />
         </label>
 
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-2">
           <label className="block space-y-1 text-sm">
             <span className="font-medium text-slate-700">Категория</span>
             <Select name="categoryId" defaultValue="">
@@ -88,18 +87,6 @@ export default async function AdminNewsNewPage({
               {ministries.map((ministry) => (
                 <option key={ministry.id} value={ministry.id}>
                   {ministry.name}
-                </option>
-              ))}
-            </Select>
-          </label>
-
-          <label className="block space-y-1 text-sm">
-            <span className="font-medium text-slate-700">Связанное событие</span>
-            <Select name="eventId" defaultValue="">
-              <option value="">Не выбрано</option>
-              {events.map((event) => (
-                <option key={event.id} value={event.id}>
-                  {event.title}
                 </option>
               ))}
             </Select>

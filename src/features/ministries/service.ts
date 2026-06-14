@@ -9,7 +9,6 @@ export async function getMinistriesPublicList() {
       _count: {
         select: {
           news: true,
-          reports: true,
           initiatives: true,
         },
       },
@@ -27,13 +26,6 @@ export async function getMinistryBySlug(slug: string) {
         orderBy: [{ displayOrder: "asc" }, { fullName: "asc" }],
       },
       news: {
-        where: {
-          status: "PUBLISHED",
-        },
-        orderBy: [{ publishedAt: "desc" }],
-        take: 6,
-      },
-      reports: {
         where: {
           status: "PUBLISHED",
         },
@@ -65,7 +57,6 @@ export async function getMinistriesAdminList() {
         select: {
           members: true,
           news: true,
-          reports: true,
           initiatives: true,
         },
       },

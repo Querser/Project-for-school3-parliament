@@ -28,7 +28,7 @@ export default async function MinistriesPage() {
               <CardDescription>{ministry.shortDescription}</CardDescription>
               {ministry.ministerMember ? <p className="text-sm text-slate-600">Министр: {ministry.ministerMember.fullName}</p> : null}
               <p className="text-xs text-slate-500">
-                Новости: {ministry._count.news} | Отчеты: {ministry._count.reports} | Инициативы: {ministry._count.initiatives}
+                Новости: {ministry._count.news} | Инициативы: {ministry._count.initiatives}
               </p>
               <Link href={`/ministries/${ministry.slug}`} className="text-sm font-semibold text-slate-800 hover:underline">
                 Открыть страницу министерства

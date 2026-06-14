@@ -147,7 +147,6 @@ export async function getLatestPublishedNews(limit = 3) {
     include: {
       category: true,
       ministry: true,
-      event: true,
       tags: {
         include: {
           tag: true,
@@ -167,7 +166,6 @@ export async function getPublishedNews() {
     include: {
       category: true,
       ministry: true,
-      event: true,
       tags: {
         include: {
           tag: true,
@@ -189,7 +187,6 @@ export async function getNewsBySlug(slug: string) {
     include: {
       category: true,
       ministry: true,
-      event: true,
       tags: {
         include: {
           tag: true,
@@ -205,7 +202,6 @@ export async function getNewsById(id: string) {
     include: {
       category: true,
       ministry: true,
-      event: true,
       tags: {
         include: {
           tag: true,
@@ -222,7 +218,6 @@ export async function getNewsAdminList() {
     include: {
       category: true,
       ministry: true,
-      event: true,
       tags: {
         include: {
           tag: true,
@@ -234,17 +229,15 @@ export async function getNewsAdminList() {
 }
 
 export async function getNewsMetaOptions() {
-  const [categories, ministries, events, tags] = await Promise.all([
+  const [categories, ministries, tags] = await Promise.all([
     prisma.newsCategory.findMany({ orderBy: [{ name: "asc" }] }),
     prisma.ministry.findMany({ orderBy: [{ displayOrder: "asc" }, { name: "asc" }] }),
-    prisma.event.findMany({ orderBy: [{ startAt: "desc" }], take: 100 }),
     prisma.newsTag.findMany({ orderBy: [{ name: "asc" }] }),
   ]);
 
   return {
     categories,
     ministries,
-    events,
     tags,
   };
 }
@@ -269,7 +262,6 @@ export async function createNews(input: NewsInput, coverImagePath?: string | nul
       scheduledAt: dates.scheduledAt,
       categoryId: input.categoryId || null,
       ministryId: input.ministryId || null,
-      eventId: input.eventId || null,
       authorId: authorId ?? null,
     },
   });
@@ -304,7 +296,6 @@ export async function updateNews(id: string, input: NewsInput, coverImagePath?: 
     scheduledAt: dates.scheduledAt,
     categoryId: input.categoryId || null,
     ministryId: input.ministryId || null,
-    eventId: input.eventId || null,
   };
 
   if (coverImagePath !== undefined) {

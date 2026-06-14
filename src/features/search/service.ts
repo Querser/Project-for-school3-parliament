@@ -5,8 +5,6 @@ export type SearchScope =
   | "news"
   | "documents"
   | "ministries"
-  | "events"
-  | "reports"
   | "achievements";
 
 export async function runGlobalSearch(query: string, scope: SearchScope = "all") {
@@ -16,8 +14,6 @@ export async function runGlobalSearch(query: string, scope: SearchScope = "all")
       news: [],
       documents: [],
       ministries: [],
-      events: [],
-      reports: [],
       achievements: [],
     };
   }
@@ -27,7 +23,7 @@ export async function runGlobalSearch(query: string, scope: SearchScope = "all")
     mode: "insensitive" as const,
   };
 
-  const [news, documents, ministries, events, reports, achievements] = await Promise.all([
+  const [news, documents, ministries, achievements] = await Promise.all([
     scope === "all" || scope === "news"
       ? prisma.news.findMany({
           where: {
@@ -57,25 +53,6 @@ export async function runGlobalSearch(query: string, scope: SearchScope = "all")
           orderBy: [{ displayOrder: "asc" }, { name: "asc" }],
         })
       : Promise.resolve([]),
-    scope === "all" || scope === "events"
-      ? prisma.event.findMany({
-          where: {
-            OR: [{ title: contains }, { description: contains }, { category: contains }],
-          },
-          take: 8,
-          orderBy: [{ startAt: "desc" }],
-        })
-      : Promise.resolve([]),
-    scope === "all" || scope === "reports"
-      ? prisma.report.findMany({
-          where: {
-            status: "PUBLISHED",
-            OR: [{ title: contains }, { summary: contains }, { content: contains }, { periodLabel: contains }],
-          },
-          take: 8,
-          orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
-        })
-      : Promise.resolve([]),
     scope === "all" || scope === "achievements"
       ? prisma.achievement.findMany({
           where: {
@@ -92,8 +69,6 @@ export async function runGlobalSearch(query: string, scope: SearchScope = "all")
     news,
     documents,
     ministries,
-    events,
-    reports,
     achievements,
   };
 }

@@ -23,7 +23,7 @@ export default async function AdminNewsEditPage({
   const { error, success } = await searchParams;
   const [news, meta] = await Promise.all([
     getNewsById(id),
-    getNewsMetaOptions().catch(() => ({ categories: [], ministries: [], events: [], tags: [] })),
+    getNewsMetaOptions().catch(() => ({ categories: [], ministries: [], tags: [] })),
   ]);
 
   if (!news) {
@@ -81,7 +81,7 @@ export default async function AdminNewsEditPage({
           <Input name="scheduledAt" type="datetime-local" defaultValue={toDateTimeInputValue(news.scheduledAt)} />
         </label>
 
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-2">
           <label className="block space-y-1 text-sm">
             <span className="font-medium text-slate-700">Категория</span>
             <Select name="categoryId" defaultValue={news.categoryId ?? ""}>
@@ -101,18 +101,6 @@ export default async function AdminNewsEditPage({
               {meta.ministries.map((ministry) => (
                 <option key={ministry.id} value={ministry.id}>
                   {ministry.name}
-                </option>
-              ))}
-            </Select>
-          </label>
-
-          <label className="block space-y-1 text-sm">
-            <span className="font-medium text-slate-700">Связанное событие</span>
-            <Select name="eventId" defaultValue={news.eventId ?? ""}>
-              <option value="">Не выбрано</option>
-              {meta.events.map((event) => (
-                <option key={event.id} value={event.id}>
-                  {event.title}
                 </option>
               ))}
             </Select>

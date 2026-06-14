@@ -42,12 +42,6 @@ enum PublicationStatus {
   ARCHIVED
 }
 
-enum EventStatus {
-  PLANNED
-  COMPLETED
-  CANCELLED
-}
-
 enum InitiativeStatus {
   NEW
   UNDER_REVIEW
@@ -118,8 +112,6 @@ model AdminUser {
   updatedAt             DateTime         @updatedAt
   sessions              AdminSession[]
   authoredNews          News[]
-  authoredEvents        Event[]
-  authoredReports       Report[]
   authoredAchievements  Achievement[]
   authoredGalleryAlbums GalleryAlbum[]
   assignedInitiatives   Initiative[]     @relation("InitiativeAssignee")
@@ -271,9 +263,7 @@ model Ministry {
   ministerMember      Member?       @relation("MinistryMinister", fields: [ministerMemberId], references: [id], onDelete: SetNull, onUpdate: Cascade)
   members             Member[]      @relation("MemberMinistries")
   news                News[]
-  events              Event[]
   initiatives         Initiative[]  @relation("InitiativeMinistry")
-  reports             Report[]
   achievements        Achievement[]
   createdAt           DateTime      @default(now())
   updatedAt           DateTime      @updatedAt
@@ -327,8 +317,6 @@ model News {
   category       NewsCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   ministryId     String?
   ministry       Ministry?     @relation(fields: [ministryId], references: [id], onDelete: SetNull)
-  eventId        String?
-  event          Event?        @relation(fields: [eventId], references: [id], onDelete: SetNull)
   authorId       String?
   author         AdminUser?    @relation(fields: [authorId], references: [id], onDelete: SetNull)
   tags           NewsOnTag[]
@@ -358,32 +346,6 @@ model Document {
 
   @@index([status, publishedAt(sort: Desc)])
   @@index([category])
-}
-
-model Event {
-  id            String         @id @default(cuid())
-  title         String
-  slug          String         @unique
-  description   String
-  category      String
-  organizer     String?
-  location      String?
-  startAt       DateTime
-  endAt         DateTime?
-  status        EventStatus    @default(PLANNED)
-  ministryId    String?
-  ministry      Ministry?      @relation(fields: [ministryId], references: [id], onDelete: SetNull)
-  news          News[]
-  createdById   String?
-  createdBy     AdminUser?     @relation(fields: [createdById], references: [id], onDelete: SetNull)
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  galleryAlbums GalleryAlbum[]
-  achievements  Achievement[]
-
-  @@index([startAt(sort: Desc)])
-  @@index([status])
-  @@index([ministryId])
 }
 
 model Initiative {
@@ -429,31 +391,6 @@ model InitiativeNote {
   @@index([initiativeId, createdAt(sort: Desc)])
 }
 
-model Report {
-  id               String            @id @default(cuid())
-  title            String
-  slug             String            @unique
-  periodLabel      String
-  summary          String
-  content          String
-  status           PublicationStatus @default(DRAFT)
-  scheduledAt      DateTime?
-  publishedAt      DateTime?
-  ministryId       String?
-  ministry         Ministry?         @relation(fields: [ministryId], references: [id], onDelete: SetNull)
-  filePath         String?
-  originalFileName String?
-  mimeType         String?
-  fileSize         Int?
-  createdById      String?
-  createdBy        AdminUser?        @relation(fields: [createdById], references: [id], onDelete: SetNull)
-  createdAt        DateTime          @default(now())
-  updatedAt        DateTime          @updatedAt
-
-  @@index([status, publishedAt(sort: Desc)])
-  @@index([ministryId, periodLabel])
-}
-
 model GalleryAlbum {
   id             String            @id @default(cuid())
   title          String
@@ -462,8 +399,6 @@ model GalleryAlbum {
   coverImagePath String?
   status         PublicationStatus @default(DRAFT)
   publishedAt    DateTime?
-  eventId        String?
-  event          Event?            @relation(fields: [eventId], references: [id], onDelete: SetNull)
   createdById    String?
   createdBy      AdminUser?        @relation(fields: [createdById], references: [id], onDelete: SetNull)
   items          GalleryItem[]
@@ -498,8 +433,6 @@ model Achievement {
   publishedAt DateTime?
   ministryId  String?
   ministry    Ministry?         @relation(fields: [ministryId], references: [id], onDelete: SetNull)
-  eventId     String?
-  event       Event?            @relation(fields: [eventId], references: [id], onDelete: SetNull)
   createdById String?
   createdBy   AdminUser?        @relation(fields: [createdById], references: [id], onDelete: SetNull)
   createdAt   DateTime          @default(now())

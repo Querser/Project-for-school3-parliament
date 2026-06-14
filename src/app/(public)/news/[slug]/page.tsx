@@ -45,14 +45,6 @@ export default async function NewsDetailsPage({ params }: { params: Promise<{ sl
           </div>
         ) : null}
         <article className="whitespace-pre-line leading-relaxed text-slate-700">{news.content}</article>
-        {news.event ? (
-          <p className="text-sm text-slate-700">
-            Связанное событие:{" "}
-            <Link href={`/events/${news.event.slug}`} className="font-semibold text-slate-800 hover:underline">
-              {news.event.title}
-            </Link>
-          </p>
-        ) : null}
       </Card>
 
       <Link href="/news" className="inline-flex text-sm font-medium text-slate-700 hover:underline">

@@ -1,9 +1,3 @@
-﻿const EVENT_STATUS_LABELS: Record<string, string> = {
-  PLANNED: "Запланировано",
-  COMPLETED: "Проведено",
-  CANCELLED: "Отменено",
-};
-
 const INITIATIVE_STATUS_LABELS: Record<string, string> = {
   NEW: "Новая",
   UNDER_REVIEW: "На рассмотрении",
@@ -34,10 +28,6 @@ const ADMIN_ROLE_LABELS: Record<string, string> = {
   ANALYST: "Аналитик",
 };
 
-export function getEventStatusLabel(status: string): string {
-  return EVENT_STATUS_LABELS[status] ?? status;
-}
-
 export function getInitiativeStatusLabel(status: string): string {
   return INITIATIVE_STATUS_LABELS[status] ?? status;
 }
@@ -53,4 +43,3 @@ export function getAccountStatusLabel(status: string): string {
 export function getAdminRoleLabel(role: string): string {
   return ADMIN_ROLE_LABELS[role] ?? role;
 }
-

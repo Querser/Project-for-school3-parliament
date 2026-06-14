@@ -17,9 +17,7 @@ export default async function AdminDashboardPage() {
     documents: 0,
     ministries: 0,
     members: 0,
-    events: 0,
     newInitiatives: 0,
-    reportsPublished: 0,
     galleryAlbumsPublished: 0,
     achievementsPublished: 0,
     pendingModeration: 0,
@@ -40,10 +38,6 @@ export default async function AdminDashboardPage() {
           </p>
         </Card>
         <Card>
-          <p className="text-sm text-slate-600">События</p>
-          <p className="mt-2 text-3xl font-semibold text-slate-900">{counters.events}</p>
-        </Card>
-        <Card>
           <p className="text-sm text-slate-600">Новые инициативы</p>
           <p className="mt-2 text-3xl font-semibold text-slate-900">{counters.newInitiatives}</p>
         </Card>
@@ -54,10 +48,6 @@ export default async function AdminDashboardPage() {
         <Card>
           <p className="text-sm text-slate-600">Документы</p>
           <p className="mt-2 text-3xl font-semibold text-slate-900">{counters.documents}</p>
-        </Card>
-        <Card>
-          <p className="text-sm text-slate-600">Отчеты (опубликовано)</p>
-          <p className="mt-2 text-3xl font-semibold text-slate-900">{counters.reportsPublished}</p>
         </Card>
         <Card>
           <p className="text-sm text-slate-600">Галерея (опубликовано)</p>

@@ -39,7 +39,7 @@ export default async function DocumentsPage({
     <div className="space-y-6">
       <SectionTitle
         title="Документы"
-        description="Конституция, регламенты, протоколы, решения и отчеты в едином архиве."
+        description="Конституция, регламенты, протоколы и решения в едином архиве."
       />
 
       <Card>

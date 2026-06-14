@@ -8,7 +8,7 @@ export type PublicGalleryPhoto = {
   id: string;
   imagePath: string;
   description: string;
-  sourceType: "news" | "gallery" | "event";
+  sourceType: "news" | "gallery";
   sourceTitle: string;
   sourceHref: string;
   publishedAt: Date;
@@ -37,7 +37,6 @@ export async function getPublicGalleryAlbums() {
           items: true,
         },
       },
-      event: true,
     },
     orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
   });
@@ -57,12 +56,6 @@ export async function getPublicGalleryPhotos(): Promise<PublicGalleryPhoto[]> {
         coverImagePath: true,
         publishedAt: true,
         createdAt: true,
-        event: {
-          select: {
-            title: true,
-            slug: true,
-          },
-        },
         items: {
           where: {
             mediaType: {
@@ -107,33 +100,25 @@ export async function getPublicGalleryPhotos(): Promise<PublicGalleryPhoto[]> {
     const publishedAt = album.publishedAt ?? album.createdAt;
 
     if (album.coverImagePath) {
-      const sourceType = album.event ? "event" : "gallery";
-      const sourceTitle = album.event ? album.event.title : album.title;
-      const sourceHref = album.event ? `/events/${album.event.slug}` : `/gallery/${album.slug}`;
-
       galleryPhotos.push({
         id: `gallery-cover-${album.id}`,
         imagePath: album.coverImagePath,
         description: album.description || album.title,
-        sourceType,
-        sourceTitle,
-        sourceHref,
+        sourceType: "gallery",
+        sourceTitle: album.title,
+        sourceHref: `/gallery/${album.slug}`,
         publishedAt,
       });
     }
 
     for (const item of album.items) {
-      const sourceType = album.event ? "event" : "gallery";
-      const sourceTitle = album.event ? album.event.title : album.title;
-      const sourceHref = album.event ? `/events/${album.event.slug}` : `/gallery/${album.slug}`;
-
       galleryPhotos.push({
         id: item.id,
         imagePath: item.mediaPath,
         description: item.caption || album.description || album.title,
-        sourceType,
-        sourceTitle,
-        sourceHref,
+        sourceType: "gallery",
+        sourceTitle: album.title,
+        sourceHref: `/gallery/${album.slug}`,
         publishedAt,
       });
     }
@@ -174,7 +159,6 @@ export async function getGalleryAlbumBySlug(slug: string) {
       status: "PUBLISHED",
     },
     include: {
-      event: true,
       items: {
         orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
       },
@@ -196,7 +180,6 @@ export async function getGalleryAlbumById(id: string) {
 export async function getGalleryAdminList() {
   return prisma.galleryAlbum.findMany({
     include: {
-      event: true,
       _count: {
         select: {
           items: true,
@@ -222,7 +205,6 @@ export async function createGalleryAlbum(input: GalleryAlbumInput, createdById?:
       description: input.description,
       status,
       publishedAt: resolvePublishedAt(status, input.publishedAt || null),
-      eventId: input.eventId || null,
       createdById: createdById ?? null,
     },
   });
@@ -248,7 +230,6 @@ export async function updateGalleryAlbum(id: string, input: GalleryAlbumInput, c
     description: input.description,
     status,
     publishedAt: resolvePublishedAt(status, input.publishedAt || null),
-    eventId: input.eventId || null,
   };
 
   if (coverImagePath !== undefined) {

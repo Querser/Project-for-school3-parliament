@@ -28,12 +28,12 @@ export function EmblemLoginTrigger() {
       type="button"
       onClick={handlePress}
       className="rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
-      aria-label="Герб школы"
-      title="Герб школы"
+      aria-label="Логотип «Новая волна»"
+      title="Логотип «Новая волна»"
     >
       <Image
         src="/gerb.jpg"
-        alt="Герб ученического парламента МОУ СОШ №3 г. Можайска"
+        alt="Логотип ученического парламента «Новая волна»"
         width={56}
         height={56}
         priority

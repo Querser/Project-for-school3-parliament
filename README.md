@@ -12,8 +12,8 @@
 - Docker Compose + Caddy
 
 ## Реализованный функционал
-- Публичные разделы: Home, About, Members, Ministries, News, Documents, Events, Initiatives, Reports, Gallery, Achievements, Join, Contact, Search.
-- Админ-разделы: dashboard, новости, документы, министерства, состав, события, инициативы, отчеты, галерея, достижения, пользователи, настройки, статические страницы, observability center.
+- Публичные разделы: Home, About, Members, Ministries, News, Documents, Initiatives, Gallery, Achievements, Join, Contact, Search.
+- Админ-разделы: dashboard, новости, документы, министерства, состав, инициативы, галерея, достижения, пользователи, настройки, статические страницы, observability center.
 - Доступы админ-панели по ролям:
   - `admin` (полный доступ)
   - `president` (все, кроме Users и Наблюдаемости)

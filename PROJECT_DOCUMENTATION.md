@@ -54,7 +54,7 @@ Main scripts are in `package.json`:
 
 ### Top-level structure
 - `src/app` — Next.js routes (public, admin, API)
-- `src/features` — domain services (news, events, gallery, settings, observability, etc.)
+- `src/features` — domain services (news, gallery, settings, observability, etc.)
 - `src/lib` — auth, db client, storage, validators, constants, utilities
 - `prisma` — schema + seed
 - `storage` — uploaded files in local dev
@@ -66,10 +66,10 @@ Main scripts are in `package.json`:
 - API: `src/app/api/*`
 
 ### Public routes (core)
-`/`, `/about`, `/members`, `/ministries`, `/news`, `/events`, `/documents`, `/initiatives`, `/reports`, `/gallery`, `/achievements`, `/join`, `/contact`, `/search`, `/privacy-policy`.
+`/`, `/about`, `/members`, `/ministries`, `/news`, `/documents`, `/initiatives`, `/gallery`, `/achievements`, `/join`, `/contact`, `/search`, `/privacy-policy`.
 
 ### Admin routes (core)
-Dashboard, News, Events, Initiatives, Documents, Reports, Gallery, Achievements, Ministries, Members, Pages, Settings, Users, Observability.
+Dashboard, News, Initiatives, Documents, Gallery, Achievements, Ministries, Members, Pages, Settings, Users, Observability.
 
 ### Server/client boundaries
 - Data mutations run in server actions (`"use server"`).
@@ -87,11 +87,10 @@ After mutations, affected pages are invalidated with `revalidatePath` (public + 
 - Homepage with key sections and highlights.
 - Ministries pages and details.
 - News list/detail with publication status filtering.
-- Events list/detail.
 - Documents list/detail + download endpoint.
 - Initiative submission form + public implemented initiatives block.
-- Reports and achievements publication pages.
-- Gallery from albums/news/event media.
+- Achievements publication page.
+- Gallery from albums and news media.
 - Join page, contacts, privacy policy.
 - Search route.
 - Theme/accessibility controls integrated in UI.
@@ -135,7 +134,7 @@ Server enforcement is done via `requireSectionAccess` and role checks in server 
 - Validation layer: `src/lib/validators/*`.
 - Form data parsing helpers: `src/lib/utils/admin-action.ts`.
 - All critical mutations validate on server.
-- Gallery/document/news/events/etc. actions handle validation and redirect with success/error status.
+- Gallery/document/news/etc. actions handle validation and redirect with success/error status.
 - Upload validation includes mime/size checks in storage layer.
 
 ---
@@ -156,10 +155,8 @@ Core entities:
 - `AdminUser`, `AdminSession`, `SecurityEvent`, `AuditLog`, `AppLog`, `TelemetryEvent`
 - `Ministry`, `Member`
 - `News`, `NewsCategory`, `NewsTag`, `NewsOnTag`
-- `Event`
 - `Document`
 - `Initiative`, `InitiativeNote`
-- `Report`
 - `Achievement`
 - `GalleryAlbum`, `GalleryItem`
 - `StaticPage`, `SiteSetting`, `HomeBlock`

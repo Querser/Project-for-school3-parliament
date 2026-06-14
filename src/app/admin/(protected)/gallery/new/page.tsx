@@ -7,7 +7,6 @@ import { Input } from "@/components/shared/input";
 import { Select } from "@/components/shared/select";
 import { Textarea } from "@/components/shared/textarea";
 import { IMAGE_UPLOAD_ACCEPT } from "@/lib/constants";
-import { prisma } from "@/lib/db/prisma";
 
 import { createGalleryAlbumAction } from "../actions";
 
@@ -17,7 +16,6 @@ export default async function AdminGalleryNewPage({
   searchParams: Promise<{ error?: string; success?: string }>;
 }) {
   const { error, success } = await searchParams;
-  const events = await prisma.event.findMany({ orderBy: [{ startAt: "desc" }] }).catch(() => []);
 
   return (
     <div className="space-y-6">
@@ -57,18 +55,6 @@ export default async function AdminGalleryNewPage({
             <Input name="publishedAt" type="date" />
           </label>
         </div>
-
-        <label className="block space-y-1 text-sm">
-          <span className="font-medium text-slate-700">Связанное событие</span>
-          <Select name="eventId" defaultValue="">
-            <option value="">Не выбрано</option>
-            {events.map((event) => (
-              <option key={event.id} value={event.id}>
-                {event.title}
-              </option>
-            ))}
-          </Select>
-        </label>
 
         <label className="block space-y-1 text-sm">
           <span className="font-medium text-slate-700">Обложка (опционально)</span>

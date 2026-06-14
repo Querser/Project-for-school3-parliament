@@ -32,7 +32,6 @@ export async function getPublicAchievements() {
     },
     include: {
       ministry: true,
-      event: true,
     },
     orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
   });
@@ -42,7 +41,6 @@ export async function getAchievementsAdminList() {
   return prisma.achievement.findMany({
     include: {
       ministry: true,
-      event: true,
     },
     orderBy: [{ updatedAt: "desc" }],
   });
@@ -70,7 +68,6 @@ export async function createAchievement(input: AchievementInput, createdById?: s
       status,
       publishedAt: resolvePublishedAt(status, input.publishedAt || null),
       ministryId: input.ministryId || null,
-      eventId: null,
       createdById: createdById ?? null,
     },
   });
@@ -101,7 +98,6 @@ export async function updateAchievement(id: string, input: AchievementInput) {
       status,
       publishedAt: resolvePublishedAt(status, input.publishedAt || null),
       ministryId: input.ministryId || null,
-      eventId: null,
     },
   });
 }

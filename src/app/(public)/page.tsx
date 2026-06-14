@@ -4,9 +4,8 @@ import { SectionTitle } from "@/components/public/section-title";
 import { Card, CardDescription, CardTitle } from "@/components/shared/card";
 import { EmptyState } from "@/components/shared/empty-state";
 import { SITE_SETTING_KEYS } from "@/lib/constants";
-import { formatDate, formatDateTime } from "@/lib/utils/date";
+import { formatDate } from "@/lib/utils/date";
 import { getPublicAchievements } from "@/features/achievements/service";
-import { getUpcomingEvents } from "@/features/events/service";
 import { getMinistriesPublicList } from "@/features/ministries/service";
 import { getLatestPublishedNews } from "@/features/news/service";
 import { getHomeBlocks, getSiteSettingsMap } from "@/features/settings/service";
@@ -24,7 +23,7 @@ const defaultQuickLinks = [
   {
     key: "documents",
     title: "Официальные документы",
-    description: "Конституция, регламенты, протоколы и отчеты",
+    description: "Конституция, регламенты, протоколы и решения",
     href: "/documents",
   },
   {
@@ -42,11 +41,10 @@ const defaultQuickLinks = [
 ];
 
 export default async function HomePage() {
-  const [settings, homeBlocks, latestNews, upcomingEvents, ministries, achievements] = await Promise.all([
+  const [settings, homeBlocks, latestNews, ministries, achievements] = await Promise.all([
     getSiteSettingsMap().catch(() => ({} as Record<string, string>)),
     getHomeBlocks().catch(() => []),
     getLatestPublishedNews(3).catch(() => []),
-    getUpcomingEvents(3).catch(() => []),
     getMinistriesPublicList().catch(() => []),
     getPublicAchievements()
       .then((items) => items.slice(0, 3))
@@ -102,33 +100,6 @@ export default async function HomePage() {
                 <p className="mt-auto text-xs text-slate-500">{formatDate(item.publishedAt)}</p>
                 <Link href={`/news/${item.slug}`} className="text-sm font-semibold text-slate-800 hover:underline">
                   Читать полностью
-                </Link>
-              </Card>
-            ))}
-          </div>
-        )}
-      </section>
-
-      <section className="space-y-4">
-        <SectionTitle title="Ближайшие события" description="Календарь запланированных встреч, форумов и акций." />
-
-        {upcomingEvents.length === 0 ? (
-          <EmptyState
-            title="Нет запланированных событий"
-            description="После публикации мероприятий информация появится в этом разделе."
-          />
-        ) : (
-          <div className="grid gap-4 md:grid-cols-3">
-            {upcomingEvents.map((event) => (
-              <Card key={event.id} className="space-y-2">
-                <CardTitle className="text-base">{event.title}</CardTitle>
-                <CardDescription>{event.description}</CardDescription>
-                <p className="text-xs text-slate-500">
-                  {formatDateTime(event.startAt)}
-                  {event.location ? ` | ${event.location}` : ""}
-                </p>
-                <Link href={`/events/${event.slug}`} className="text-sm font-semibold text-slate-800 hover:underline">
-                  Перейти к событию
                 </Link>
               </Card>
             ))}

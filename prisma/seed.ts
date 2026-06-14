@@ -3,7 +3,6 @@
   MemberRoleType,
   NewsStatus,
   PublicationStatus,
-  EventStatus,
   InitiativePriority,
   InitiativeStatus,
   AdminRole,
@@ -45,8 +44,6 @@ async function cleanupData() {
   await prisma.galleryItem.deleteMany({});
   await prisma.galleryAlbum.deleteMany({});
   await prisma.achievement.deleteMany({});
-  await prisma.report.deleteMany({});
-  await prisma.event.deleteMany({});
   await prisma.newsOnTag.deleteMany({});
   await prisma.newsTag.deleteMany({});
   await prisma.newsCategory.deleteMany({});
@@ -247,41 +244,7 @@ async function main() {
     data: { name: "Проекты", slug: "proekty" },
   });
 
-  const tagEvents = await prisma.newsTag.create({ data: { name: "мероприятия", slug: "meropriyatiya" } });
   const tagInitiatives = await prisma.newsTag.create({ data: { name: "инициативы", slug: "initsiativy" } });
-
-  const springForum = await prisma.event.create({
-    data: {
-      title: "Весенний форум ученических инициатив",
-      slug: "vesenniy-forum-uchenicheskih-initsiativ",
-      description:
-        "Открытый форум с презентацией школьных инициатив, обсуждением проектов и формированием плана реализации.",
-      category: "Форум",
-      organizer: "Ученический парламент",
-      location: "Актовый зал",
-      startAt: new Date("2026-04-25T10:00:00.000Z"),
-      endAt: new Date("2026-04-25T13:00:00.000Z"),
-      status: EventStatus.PLANNED,
-      ministryId: ministries.get("ministerstvo-socialnyh-proektov")?.id,
-      createdById: chiefAdmin.id,
-    },
-  });
-
-  const volunteerDay = await prisma.event.create({
-    data: {
-      title: "День добровольца",
-      slug: "den-dobrovoltsa",
-      description: "Школьная акция взаимопомощи и полезных социальных практик.",
-      category: "Акция",
-      organizer: "Министерство социальных проектов",
-      location: "Территория школы",
-      startAt: new Date("2026-03-10T08:30:00.000Z"),
-      endAt: new Date("2026-03-10T12:00:00.000Z"),
-      status: EventStatus.COMPLETED,
-      ministryId: ministries.get("ministerstvo-socialnyh-proektov")?.id,
-      createdById: chiefAdmin.id,
-    },
-  });
 
   const newsSeed = [
     {
@@ -294,7 +257,6 @@ async function main() {
       publishedAt: new Date("2026-02-15T09:00:00.000Z"),
       categoryId: categoryAnnouncements.id,
       ministryId: ministries.get("ministerstvo-socialnyh-proektov")?.id,
-      eventId: null,
       tagIds: [tagInitiatives.id],
     },
     {
@@ -307,8 +269,7 @@ async function main() {
       publishedAt: new Date("2026-03-03T10:30:00.000Z"),
       categoryId: categoryProjects.id,
       ministryId: ministries.get("ministerstvo-socialnyh-proektov")?.id,
-      eventId: volunteerDay.id,
-      tagIds: [tagInitiatives.id, tagEvents.id],
+      tagIds: [tagInitiatives.id],
     },
     {
       title: "Анонс весеннего форума ученических инициатив",
@@ -320,8 +281,7 @@ async function main() {
       publishedAt: null,
       categoryId: categoryAnnouncements.id,
       ministryId: ministries.get("ministerstvo-socialnyh-proektov")?.id,
-      eventId: springForum.id,
-      tagIds: [tagEvents.id],
+      tagIds: [tagInitiatives.id],
     },
   ];
 
@@ -337,7 +297,6 @@ async function main() {
         publishedAt: item.publishedAt,
         categoryId: item.categoryId,
         ministryId: item.ministryId,
-        eventId: item.eventId,
         authorId: chiefAdmin.id,
       },
     });
@@ -399,35 +358,6 @@ async function main() {
     ],
   });
 
-  const reportFile = await ensureTextFile(
-    "uploads/reports/report-march-2026.txt",
-    [
-      "Отчет министерства социальных проектов за март 2026",
-      "",
-      "Проведено 4 инициативы, из них 3 завершены и 1 находится в реализации.",
-      "Участие приняли 126 учащихся.",
-    ].join("\n"),
-  );
-
-  await prisma.report.create({
-    data: {
-      title: "Отчет министерства социальных проектов",
-      slug: "otchet-ministerstva-socialnyh-proektov-mart-2026",
-      periodLabel: "Март 2026",
-      summary: "Итоги социальных инициатив за март: реализованные проекты и вовлеченность учащихся.",
-      content:
-        "В марте реализованы инициативы по взаимопомощи в учебе, благоустройству и наставничеству. Подготовлен план масштабирования успешных практик.",
-      status: PublicationStatus.PUBLISHED,
-      publishedAt: new Date("2026-04-01T09:30:00.000Z"),
-      ministryId: ministries.get("ministerstvo-socialnyh-proektov")?.id,
-      filePath: reportFile.relativePath,
-      originalFileName: "report-march-2026.txt",
-      mimeType: "text/plain",
-      fileSize: reportFile.size,
-      createdById: chiefAdmin.id,
-    },
-  });
-
   await prisma.achievement.createMany({
     data: [
       {
@@ -440,7 +370,6 @@ async function main() {
         status: PublicationStatus.PUBLISHED,
         publishedAt: new Date("2026-03-28T10:00:00.000Z"),
         ministryId: ministries.get("ministerstvo-socialnyh-proektov")?.id,
-        eventId: volunteerDay.id,
         createdById: chiefAdmin.id,
       },
       {
@@ -478,7 +407,6 @@ async function main() {
       coverImagePath: galleryCover.relativePath,
       status: PublicationStatus.PUBLISHED,
       publishedAt: new Date("2026-04-25T15:00:00.000Z"),
-      eventId: springForum.id,
       createdById: chiefAdmin.id,
     },
   });
@@ -595,7 +523,7 @@ async function main() {
       {
         key: "home_documents",
         title: "Официальные документы",
-        description: "Конституция, регламенты, протоколы и отчеты в открытом доступе.",
+        description: "Конституция, регламенты, протоколы и решения в открытом доступе.",
         ctaLabel: "Открыть библиотеку",
         ctaHref: "/documents",
         displayOrder: 2,

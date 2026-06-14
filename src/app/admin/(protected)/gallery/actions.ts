@@ -28,7 +28,6 @@ function parseGalleryAlbumInput(formData: FormData) {
     description: getFormStringValue(formData, "description"),
     status: getFormStringValue(formData, "status"),
     publishedAt: getFormStringValue(formData, "publishedAt"),
-    eventId: getFormStringValue(formData, "eventId"),
   });
 }
 

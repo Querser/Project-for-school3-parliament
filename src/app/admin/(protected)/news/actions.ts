@@ -21,7 +21,6 @@ function parseNewsInput(formData: FormData) {
     scheduledAt: getFormStringValue(formData, "scheduledAt"),
     categoryId: getFormStringValue(formData, "categoryId"),
     ministryId: getFormStringValue(formData, "ministryId"),
-    eventId: getFormStringValue(formData, "eventId"),
     tags: getFormStringValue(formData, "tags"),
   });
 }

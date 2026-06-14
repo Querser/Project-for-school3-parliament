@@ -76,26 +76,6 @@ export default async function MinistryDetailsPage({ params }: { params: Promise<
           </div>
         )}
       </section>
-
-      <section className="space-y-3">
-        <h2 className="text-xl font-semibold text-slate-900">Отчеты министерства</h2>
-        {ministry.reports.length === 0 ? (
-          <EmptyState title="Отчетов пока нет" description="После публикации отчеты появятся в этом разделе." />
-        ) : (
-          <div className="space-y-2">
-            {ministry.reports.map((report) => (
-              <Card key={report.id} className="space-y-1">
-                <h3 className="text-base font-semibold text-slate-900">{report.title}</h3>
-                <p className="text-sm text-slate-600">{report.summary}</p>
-                <p className="text-xs text-slate-500">Период: {report.periodLabel}</p>
-                <Link href={`/reports/${report.slug}`} className="text-sm font-semibold text-slate-800 hover:underline">
-                  Открыть отчет
-                </Link>
-              </Card>
-            ))}
-          </div>
-        )}
-      </section>
     </div>
   );
 }
